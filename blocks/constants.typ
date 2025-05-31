@@ -1,3 +1,5 @@
+#let logo="../images/header_logo.png"
+
 #let research_title="PTB Vorlage"
 
 // WARN: The comma at the end is needed!

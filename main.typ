@@ -1,27 +1,71 @@
-#import "template.typ": *
+// NOTE: Import dependencies here
+#import "@preview/glossarium:0.5.6": make-glossary, register-glossary, print-glossary
+#import "@preview/acrostiche:0.5.2": init-acronyms, print-index, acr
 
+#import "blocks/constants.typ": research_title, authors, date_of_publication
+
+// SETUP Glossary and Acronyms
+#show: make-glossary
+#import "blocks/glossary.typ": glossary, acronym-list
+#register-glossary(glossary)
+#init-acronyms(acronym-list)
+
+// SETUP Biblography
 #set bibliography(
   style: "ieee", // Change according to needs (hwr_citation.csl is also a valid option)
 )
-
 #let bib = bibliography("literatur.bib")
 
-#import "blocks/constants.typ" as c
+// SETUP Main Body
+#include "blocks/title.typ"
+#pagebreak()
 
-#import "blocks/abstract.typ" as abstract
+// Abstract
+#include "blocks/abstract.typ"
+#pagebreak()
 
-#show: project.with(
-  title: c.research_title,
-  authors: c.authors,
-  abstract: abstract.abstract_content,
-  date: c.date_of_publication,
-  logo: "images/header_logo.png",
-)
+// Content outline
+#outline(depth: 3, indent: 2%)
+#pagebreak()
 
+#set par(justify: true)
+
+// Note on Gender-Inclusive Language
+#include "blocks/note.typ"
+#pagebreak()
+
+// Introduction
 #include "blocks/intro.typ"
 #pagebreak()
 
-#include "blocks/chapter1.typ"
+// Main content
+#include "blocks/content.typ"
 #pagebreak()
 
+// Declaration of authorship
+#include "blocks/declaration_of_authorship.typ"
+#pagebreak()
+
+// Glossary
+#set heading(numbering: none)
+#set page(numbering: "I")
+= Glossary
+#print-glossary(glossary)
+#pagebreak()
+
+// Acronyms
+#print-index(outlined: true, title: "Acronyms")
+#pagebreak()
+
+// Biblography
 #bib
+#pagebreak()
+
+// List of Figures
+#let outline_title = "List of Figures"
+#hide[#heading(outline_title)]
+#outline(title: outline_title, target: figure.where(kind: image))
+#pagebreak()
+
+// Appendix
+#include "blocks/appendix.typ"
