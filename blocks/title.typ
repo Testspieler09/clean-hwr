@@ -1,10 +1,5 @@
 #import "constants.typ": *
 
-#set document(author: authors, title: research_title)
-#set page(numbering: none, number-align: center)
-#set text(font: "Libertinus Serif", lang: "en")
-#set heading(numbering: "1.1")
-
 #let equal_spacing = 0.25fr
 
 // NOTE: I align everything center here
@@ -34,7 +29,7 @@
 )
 
 // Middle section
-#align(center, text(1.1em, [published on:  #date_of_publication]))
+#align(center, text(1.1em, [published on  #date_of_publication]))
 #v(0.6em, weak: true)
 $circle.filled.small$
 #v(0.6em, weak: true)

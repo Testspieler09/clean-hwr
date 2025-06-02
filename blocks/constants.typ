@@ -1,6 +1,6 @@
 #let logo = "../assets/images/header_logo.png"
 
-#let research_title = "PTB Vorlage"
+#let research_title = "PTB Template"
 
 // WARN: The comma at the end is needed!
 #let authors = ("Pépe Hanisch",)

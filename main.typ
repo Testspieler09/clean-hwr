@@ -3,6 +3,11 @@
 
 #import "blocks/constants.typ": research_title, authors, date_of_publication
 
+#set document(author: authors, title: research_title)
+#set page(numbering: none, number-align: center)
+#set text(font: "Libertinus Serif", lang: "en")
+#set heading(numbering: "1.1")
+
 // SETUP Glossary and Acronyms
 #show: make-glossary
 #import "blocks/glossary.typ": glossary, acronym-list
@@ -13,7 +18,7 @@
 #set bibliography(
   style: "ieee", // Change according to needs (assets/bib/hwr_citation.csl is also a valid option)
 )
-#let bib = bibliography("assets/bib/literatur.bib")
+#let bib = bibliography("assets/bib/literature.bib")
 
 // SETUP Main Body
 #include "blocks/title.typ"
