@@ -6,11 +6,11 @@ I hereby declare that this work titled “#research_title” is my own and has b
 
 I confirm that this work has not been submitted, either in whole or in part, for any other academic degree or qualification.
 
-#linebreak()
+#v(4.0em)
 
 #table(
   columns: (50%,50%),
   stroke: none,
   inset: 20pt,
-  [Date: #line(length: 100%)], [Signature: #line(length: 100%)],
+  [#line(length: 100%)Date], [#line(length: 100%)Signature],
 )
