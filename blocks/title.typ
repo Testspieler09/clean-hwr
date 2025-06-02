@@ -29,7 +29,7 @@
 )
 
 // Middle section
-#align(center, text(1.1em, [published on  #date_of_publication]))
+#text(1.1em, [published on  #date_of_publication])
 #v(0.6em, weak: true)
 $circle.filled.small$
 #v(0.6em, weak: true)
