@@ -13,4 +13,4 @@ This is a reference to #gls("html"). The term #gls("css") is also defined.
 The HWR Logo (@HWR)
 
 \
-#figure(image("../images/header_logo.png", width: 80%), caption: "The HWR Logo")<HWR>
+#figure(image("../assets/images/header_logo.png", width: 80%), caption: "The HWR Logo")<HWR>

@@ -1,4 +1,3 @@
-// NOTE: Import dependencies here
 #import "@preview/glossarium:0.5.6": make-glossary, register-glossary, print-glossary
 #import "@preview/acrostiche:0.5.2": init-acronyms, print-index, acr
 
@@ -12,9 +11,9 @@
 
 // SETUP Biblography
 #set bibliography(
-  style: "ieee", // Change according to needs (hwr_citation.csl is also a valid option)
+  style: "ieee", // Change according to needs (assets/bib/hwr_citation.csl is also a valid option)
 )
-#let bib = bibliography("literatur.bib")
+#let bib = bibliography("assets/bib/literatur.bib")
 
 // SETUP Main Body
 #include "blocks/title.typ"
