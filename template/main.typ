@@ -1,5 +1,11 @@
 #import "@preview/hwr-template:0.1.0": *
 
+// These packages are used to displaying the acronyms and glossaries
+// It needs to be imported here so you can use #acr / #gls
+// to reference them
+#import "@preview/acrostiche:0.5.2": *
+#import "@preview/glossarium:0.5.6": *
+
 // Count words automatically
 #import "@preview/wordometer:0.1.4": word-count, total-words
 #show: word-count
@@ -19,18 +25,31 @@
     (key: "Some value", value: "Ditto", index: 2),
     (key: "GitHub", value: "Testspieler09", index: 0),
 ),
+  acronyms: (entries: ("WTP": ("Wonderful Typst Package", "Wonderful Typst Packages"))),
+  glossary: (
+    entries: ((
+      key: "kuleuven",
+      short: "KU Leuven",
+      long: "Katholieke Universiteit Leuven",
+      description: "A university in Belgium.",
+    ),)
+  ),
   bibliography-object: bibliography("refs.bib"),
   word_count: total-words,
 )
 
-= What is quantum computing
+= What is quantum computing <chap1>
 #lorem(400)
 #pagebreak()
 
 = Qubits and Kets
 #lorem(200)
+
+#acr("WTP")
+
+Now we reference @chap1
 #footnote[cf. @Cooley65]
-#footnote[cf. #gls(html)]
+#footnote[cf. #gls("kuleuven")]
 
 #let unit(u) = math.display(math.upright(u))
 #let si-table = table(

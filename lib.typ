@@ -1,5 +1,6 @@
 #let hwr(
   language: "en",
+  main-font: "TeX Gyre Termes",
 
   // Main Metadata for the title page
   metadata: (
@@ -11,61 +12,58 @@
     enrollment_year: "2024",
     semester: "2",
     company_supervisor: "Max Mustermann",
+    // These do not need to be changed by the user
+    university: none,
+    date_of_publication: none,
+    uni-logo: none,
+    company-logo: none,
   ),
   custom_entries: (),
   word_count: none,
-  university: "Berlin School of Economics and Law",
-  date_of_publication: datetime.today().display(),
-  uni-logo: "template/images/header_logo.png",
-  company-logo: none,
 
   // Abstract content
   abstract: [#lorem(30)],
 
+  // A note that is only relevant if you write a german paper
   note-gender-inclusive-language: (
     enabled: false,
-    title: "Hinweis zum sprachlichen Gendern"
+    title: ""
   ),
 
   // All the lists and outlines
   glossary: (
-    enabled: true,
-    title: "Glossary",
-    entries: (
-      (
-        key: "html",
-        short: "HTML",
-        long: "Hypertext Markup Language",
-        description: "A standard language for creating web pages",
-        group: "Web"
-      ),
-    )
+    title: "",
+    entries: ()
   ),
   acronyms: (
-    enabled: true,
-    title: "Acronyms",
-    entries: (
-    )
+    title: "",
+    entries: ()
   ),
-  bibliography-object: none,
-  citation_style: "template/hwr_citation.csl",
   figure-index: (
     enabled: true,
-    title: "Index of Figures"
+    title: ""
   ),
   table-index: (
     enabled: true,
-    title: "Index of Tables"
+    title: ""
   ),
   listing-index: (
     enabled: true,
-    title: "Index of Listings"
+    title: ""
   ),
 
-  appendix: [
-    = Appendix
-    Add some appendix here
-  ],
+  // Bibliography settings
+  bibliography-object: none,
+  citation_style: "template/hwr_citation.csl",
+
+  // The content of the appendix
+  appendix: (
+    enabled: true,
+    content: [
+      = Appendix
+      Add some appendix here
+    ]
+  ),
 
   body,
 ) = {
@@ -73,12 +71,18 @@
 
   set document(author: metadata.authors, title: metadata.title)
   set page(numbering: none, number-align: center)
-  set text(font: "TeX Gyre Termes", lang: language)
-  set heading(numbering: "1.1")
+  set text(font: main-font, lang: language)
+  let sup = if language == "de" [Kapitel] else [Chapter]
+  set heading(numbering: "1.1", supplement: sup)
+
+  show heading.where(): it => {
+    it
+    linebreak()
+  }
 
   // SETUP Acronyms
-  if acronyms.enabled and acronyms.entries != () {
-    init-acronyms(acronyms)
+  if acronyms.entries != () {
+    init-acronyms(acronyms.entries)
   }
 
   // SETUP Title page
@@ -87,22 +91,22 @@
 
   // Logo settings
   v(equal_spacing)
-  if uni-logo != none and company-logo != none {
+  if metadata.at("uni-logo", default: "template/images/header_logo.png") != none and metadata.at("company-logo", default: none) != none {
     grid(
       columns: (1fr, 1fr),
       rows: (auto),
       grid.cell(
         colspan: 1,
         align: center,
-        image(uni-logo, width: 70%),
+        image(metadata.at("uni-logo", default: "template/images/header_logo.png"), width: 70%),
       ),
       grid.cell(
         colspan: 1,
         align: center,
-        image(company-logo, width: 70%),
+        image(metadata.company-logo, width: 70%),
       ),
     )
-  } else if uni-logo != none {
+  } else if metadata.at("uni-logo", default: "template/images/header_logo.png") != none {
     grid(
       columns: (0.5fr),
       rows: (auto),
@@ -111,10 +115,10 @@
       grid.cell(
         colspan: 1,
         align: center,
-        image(uni-logo, width: 46%),
-      )
+        image(metadata.at("uni-logo", default: "template/images/header_logo.png"), width: 46%)
+      ),
     )
-  } else if company-logo != none {
+  } else if metadata.at("company-logo", default: none) != none {
     grid(
       columns: (0.5fr),
       rows: (auto),
@@ -147,16 +151,16 @@
 
   // Middle section
   if language == "de" {
-    text(1.1em, [vorgelegt am #date_of_publication])
+    text(1.1em, [vorgelegt am #metadata.at("date_of_publication", default: datetime.today().display())])
   } else {
-    text(1.1em, [published on #date_of_publication])
+    text(1.1em, [published on #metadata.at("date_of_publication", default: datetime.today().display())])
   }
   v(0.6em, weak: true)
   $circle.filled.small$
   v(0.6em, weak: true)
   metadata.field_of_study
   v(0.6em, weak: true)
-  university
+  metadata.at("university", default: "Berlin School of Economics and Law")
 
   v(equal_spacing)
 
@@ -252,27 +256,14 @@
   v(1.618fr)
   pagebreak()
 
-  // Content outline
-  outline(depth: 3, indent: 2%)
-  pagebreak()
-
-  set par(justify: true)
-
   if note-gender-inclusive-language.enabled and language == "de" {
-    heading(note-gender-inclusive-language.title, numbering: none)
+    heading(note-gender-inclusive-language.at("title", default: "Hinweis zum sprachlichen Gendern"), numbering: none)
     [
       Aus Gründen der besseren Lesbarkeit wird im Text verallgemeinernd das generische Maskulinum verwendet.
       Diese Formulierungen umfassen gleichermaßen weibliche, männliche und diverse Personen.
     ]
     pagebreak()
   }
-  set page(numbering: "1")
-
-  body
-
-  // Settings for pages after main body
-  set heading(numbering: none)
-  set page(numbering: "I")
 
   // Declaration of authorship
   if language == "de" {
@@ -316,29 +307,27 @@
     pagebreak()
   }
 
+  // Content outline
+  outline(depth: 3, indent: 2%)
+  pagebreak()
+
   // Glossary
-  if glossary.enabled {
+  if glossary.entries != () {
     import "@preview/glossarium:0.5.6": *
     show: make-glossary
     register-glossary(glossary.entries)
 
-    heading(glossary.title)
-    print-glossary(glossary.entries)
+    heading(glossary.at("title", default: "Glossary"), numbering: none)
+    print-glossary(glossary.entries, show-all: true)
     pagebreak()
   }
 
   // Acronyms
-  if acronyms.enabled and acronyms.entries != () {
-    print-index(outlined: true, title: acronyms.title)
+  if acronyms.entries != () {
+    print-index(outlined: true, title: acronyms.at("title", default: "Acronyms"))
     pagebreak()
   }
 
-  // Biblography
-  if bibliography-object != none {
-    set bibliography(style: citation_style)
-    bibliography-object
-    pagebreak()
-  }
 
   // Display indices of figures, tables, and listings.
   let fig-t(kind) = figure.where(kind: kind)
@@ -373,6 +362,24 @@
     }
   }
 
+  set par(justify: true)
+  set page(numbering: "1")
+
+  body
+
+  // Settings for pages after main body
+  set heading(numbering: none)
+  set page(numbering: "I")
+
+  // Biblography
+  if bibliography-object != none {
+    set bibliography(style: citation_style)
+    bibliography-object
+    pagebreak()
+  }
+
   // Appendix
-  appendix
+  if appendix.enabled {
+    appendix.content
+  }
 }
