@@ -142,11 +142,10 @@
   // Author information.
   pad(
     top: 2.9em,
-    grid(
-      columns: (1fr,) * calc.min(3, metadata.authors.len()),
-      gutter: 1em,
-      ..metadata.authors.map(author => text(1.3em, strong(author))),
-    ),
+    text(
+      1.3em,
+      strong(metadata.authors.join(", "))
+    )
   )
 
   // Middle section
