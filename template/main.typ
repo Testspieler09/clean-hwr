@@ -10,58 +10,69 @@
 #import "@preview/wordometer:0.1.4": word-count, total-words
 #show: word-count
 
-#show : hwr.with(
+#show: hwr.with(
   metadata: (
-    title: [PTB Template],
-    student_id: "XXXXXXXXXXXXXXXX",
-    authors: ("Pépe Hanisch",),
+    title: [Quantum Computing in Practice],
+    student_id: "12345678",
+    authors: ("Alice Becker", "Bob Klein"),
     field_of_study: "Computer Science",
-    company: "SAP SE",
+    company: "IBM Quantum",
     enrollment_year: "2024",
     semester: "2",
-    company_supervisor: "Max Mustermann",
+    company_supervisor: "Dr. Eva Schwarz",
   ),
   custom_entries: (
-    (key: "Some value", value: "Ditto", index: 2),
-    (key: "GitHub", value: "Testspieler09", index: 0),
-),
-  acronyms: (entries: ("WTP": ("Wonderful Typst Package", "Wonderful Typst Packages"))),
+    (key: "GitHub", value: "aliceb-quantum", index: 0),
+    (key: "LinkedIn", value: "Alice Becker", index: 1),
+  ),
+  acronyms: (
+    title: "Abbreviations",
+    entries: (
+      "QPU": ("Quantum Processing Unit", "Quantum Processing Units"),
+    ),
+  ),
   glossary: (
-    entries: ((
-      key: "kuleuven",
-      short: "KU Leuven",
-      long: "Katholieke Universiteit Leuven",
-      description: "A university in Belgium.",
-    ),)
+    entries: (
+      (
+        key: "quantum_superposition",
+        short: "Superposition",
+        long: "Quantum Superposition",
+        description: "A fundamental principle of quantum mechanics where a particle can exist in multiple states simultaneously.",
+      ),
+    ),
   ),
   bibliography-object: bibliography("refs.bib"),
+  figure-index: (enabled: true),
+  table-index: (enabled: true),
+  listing-index: (enabled: true, title: "Index of Code Snippets"),
   word_count: total-words,
 )
 
-= What is quantum computing <chap1>
-#lorem(400)
+= Introduction to Quantum Computing
+Quantum computing leverages the principles of quantum mechanics to process information. Unlike classical bits, which are binary, quantum bits — or #gls("quantum_superposition") — can exist in a *superposition* of states.
+#lorem(100)
+
+In this report, we explore how #acr("QPU")s are used in real-world applications.
+
 #pagebreak()
 
-= Qubits and Kets
-#lorem(200)
+= Practical Implementation at IBM <IBM>
+IBM Quantum offers access to real #acr("QPU")s over the cloud. This has enabled researchers and students to experiment with real quantum algorithms#footnote[cf. @Feynman82].
 
-#acr("WTP")
-
-Now we reference @chap1
-#footnote[cf. @Cooley65]
-#footnote[cf. #gls("kuleuven")]
+== Core Concepts
+After we talked about IBM in @IBM we will continue with #lorem(150)
 
 #let unit(u) = math.display(math.upright(u))
 #let si-table = table(
   columns: 3,
   table.header[Quantity][Symbol][Unit],
-  [length], [$l$], [#unit("m")],
-  [mass], [$m$], [#unit("kg")],
-  [time], [$t$], [#unit("s")],
-  [electric current], [$I$], [#unit("A")],
-  [temperature], [$T$], [#unit("K")],
-  [amount of substance], [$n$], [#unit("mol")],
-  [luminous intensity], [$I_v$], [#unit("cd")],
+  [Length], [$l$], [#unit("m")],
+  [Mass], [$m$], [#unit("kg")],
+  [Time], [$t$], [#unit("s")],
+  [Electric Current], [$I$], [#unit("A")],
+  [Temperature], [$T$], [#unit("K")],
+  [Substance Amount], [$n$], [#unit("mol")],
+  [Luminous Intensity], [$I_v$], [#unit("cd")],
 )
 #[
   #set table(inset: 5pt, stroke: 1pt + black)
@@ -70,34 +81,28 @@ Now we reference @chap1
     h(0.5em) + it.body.text + h(0.5em)
     v(0.5em)
   }
-  #figure(caption: [Typst's default styling], si-table)
+  #figure(caption: ["SI Base Units"], si-table)
 ]
 
-#let snip(cap) = figure(caption: cap)[
-  ```rust
-  fn main() {
-      let user = ("Adrian", 38);
-      println!("User {} is {} years old", user.0, user.1);
-
-      // tuples within tuples
-      let employee = (("Adrian", 38), "die Mobiliar");
-      println!("User {} is {} years old and works for {}", employee.0.1, employee.0.1, employee.1);
-  }
-  ```
-]
-
+== Code Example
 #show raw: set text(font: "Fira Mono")
-For comparison, here is what `code` in Fira Mono looks like:
-#snip("Code snippet typeset in Fira Mono font")
+Below is an example of tuple usage in Rust:
 
-#show raw: set text(font: ("Iosevka", "Fira Mono"))
-and here is how the same `code` looks in Iosevka:
-#snip("Code snippet typeset in Iosevka font")
+#figure(caption: ["Rust code using tuples"])[
+```rust
+fn main() {
+    let user = ("Alice", 29);
+    println!("User {} is {} years old", user.0, user.1);
 
-#figure(image("images/header_logo.png", width: 80%), caption: "The HWR Logo")<HWR>
+    let employee = (("Alice", 29), "IBM Quantum");
+    println!("{} is {} and works for {}", employee.0.0, employee.0.1, employee.1);
+}
+```
+]
+#figure(image("images/header_logo.png", width: 80%), caption: "Logo of the Berlin School of Economics and Law")<HWR>
 
 == Visualization
 #lorem(233)
 
-== Subchapter
+== Subchapter: Outlook
 #lorem(60)

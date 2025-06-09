@@ -21,6 +21,9 @@
   custom_entries: (),
   word_count: none,
 
+  // Declaration of authorship
+  custom_declaration_of_authorship: [],
+
   // Abstract content
   abstract: [#lorem(30)],
 
@@ -40,15 +43,15 @@
     entries: ()
   ),
   figure-index: (
-    enabled: true,
+    enabled: false,
     title: ""
   ),
   table-index: (
-    enabled: true,
+    enabled: false,
     title: ""
   ),
   listing-index: (
-    enabled: true,
+    enabled: false,
     title: ""
   ),
 
@@ -265,7 +268,9 @@
   }
 
   // Declaration of authorship
-  if language == "de" {
+  if custom_declaration_of_authorship != [] {
+    custom_declaration_of_authorship
+  } else if language == "de" {
     heading("Ehrenwörtliche Erkärung", numbering: none)
     [
       Ich erkläre ehrenwörtlich:
@@ -327,16 +332,14 @@
     pagebreak()
   }
 
-
   // Display indices of figures, tables, and listings.
   let fig-t(kind) = figure.where(kind: kind)
-  let has-fig(kind) = counter(fig-t(kind)).get().at(0) > 0
   if figure-index.enabled or table-index.enabled or listing-index.enabled {
     show outline: set heading(outlined: true)
     context {
-      let imgs = figure-index.enabled and has-fig(image)
-      let tbls = table-index.enabled and has-fig(table)
-      let lsts = listing-index.enabled and has-fig(raw)
+      let imgs = figure-index.enabled
+      let tbls = table-index.enabled
+      let lsts = listing-index.enabled
       if imgs {
         outline(
           title: figure-index.at("title", default: "Index of Figures"),
