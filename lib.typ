@@ -5,14 +5,14 @@
   // Main Metadata for the title page
   metadata: (
     title: [PTB Template],
-    student_id: "XXXXXXXXXXXXXXXX",
-    authors: ("Pépe Hanisch",),
-    field_of_study: "Computer Science",
-    company: "SAP SE",
-    enrollment_year: "2024",
-    semester: "2",
-    company_supervisor: "Max Mustermann",
+    student_id: "",
+    authors: (),
+    company: "",
+    enrollment_year: "",
+    semester: "",
+    company_supervisor: "",
     // These do not need to be changed by the user
+    field_of_study: none,
     university: none,
     date_of_publication: none,
     uni-logo: none,
@@ -160,7 +160,7 @@
   v(0.6em, weak: true)
   $circle.filled.small$
   v(0.6em, weak: true)
-  metadata.field_of_study
+  metadata.at("field_of_study", default: "Computer Science")
   v(0.6em, weak: true)
   metadata.at("university", default: "Berlin School of Economics and Law")
 

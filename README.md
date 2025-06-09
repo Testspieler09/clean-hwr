@@ -4,11 +4,11 @@ Welcome! This repository offers two Typst templates (English and German) designe
 
 ## Usage
 You can use this template in the Typst web app by clicking "Start from template"
-on the dashboard and searching for `hwr-template`.
+on the dashboard and searching for `clean-hwr-template`.
 
 Alternatively, you can use the CLI to kick this project off using the command
 ```
-typst init @preview/hwr-template
+typst init @preview/clean-hwr-template:0.1.0
 ```
 
 Typst will create a new directory with all the files needed to get you started.
@@ -25,7 +25,6 @@ The `hwr(...)` function is the main entry point to configure and render the **PT
     title: ["My Report Title"],
     student_id: "12345678",
     authors: ("Your Name",),
-    field_of_study: "Computer Science",
     company: "Example Corp",
     enrollment_year: "2024",
     semester: "2",
