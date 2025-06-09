@@ -57,7 +57,7 @@
 
   // Bibliography settings
   bibliography-object: none,
-  citation_style: "template/hwr_citation.csl",
+  citation_style: "hwr_citation.csl",
 
   // The content of the appendix
   appendix: (

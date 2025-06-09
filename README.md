@@ -126,7 +126,7 @@ These are fetched automatically when compiling the document, so you don’t need
 Big thanks to [**Patrick O'Brien**](https://github.com/POBrien333) for creating the citation style file used in this template. You can find it at:
 
 ```
-template/hwr_citation.csl
+hwr_citation.csl
 ```
 
 Original source: [Berlin School of Economics and Law CSL Style](https://github.com/citation-style-language/styles/blob/master/berlin-school-of-economics-and-law-international-marketing-management.csl)
