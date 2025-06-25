@@ -146,7 +146,7 @@
 
   // Middle section
   if language == "de" {
-    text(1.1em, [vorgelegt am #metadata.at("date-of-publication", default: datetime.today().display())])
+    text(1.1em, [vorgelegt am #metadata.at("date-of-publication", default: datetime.today().display("[day].[month].[year]"))])
   } else {
     text(1.1em, [published on #metadata.at("date-of-publication", default: datetime.today().display())])
   }
