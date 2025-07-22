@@ -1,13 +1,11 @@
 ---
-name: 'Bug '
+name: Bug
 about: Report a bug or issue
 title: ''
 labels: bug
 assignees: ''
 
 ---
-
-# Issue Template
 
 **Template Version:**
 - [ ] 0.1.0
