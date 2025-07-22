@@ -29,6 +29,7 @@ The `hwr(...)` function is the main entry point to configure and render the **PT
     enrollment-year: "2024",
     semester: "2",
     company-supervisor: "Jane Doe",
+    company-logo: image("images/logo.png", width: 46%),
   ),
 
   custom-entries: (
