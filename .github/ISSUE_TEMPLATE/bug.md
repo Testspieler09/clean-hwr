@@ -9,6 +9,7 @@ assignees: ''
 
 **Template Version:**
 - [ ] 0.1.0
+- [ ] 0.1.1
 - [ ] X.X.X (please specify)
 
 **Typst Version (if applicable):**

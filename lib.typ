@@ -87,31 +87,19 @@
 
   // Logo settings
   v(equal-spacing)
-  if metadata.at("uni-logo", default: "template/images/header_logo.png") != none and metadata.at("company-logo", default: none) != none {
+  if metadata.at("uni-logo", default: none) != none and metadata.at("company-logo", default: none) != none {
     grid(
       columns: (1fr, 1fr),
       rows: (auto),
       grid.cell(
         colspan: 1,
         align: center,
-        image(metadata.at("uni-logo", default: "template/images/header_logo.png"), width: 70%),
+        metadata.uni-logo,
       ),
       grid.cell(
         colspan: 1,
         align: center,
-        image(metadata.company-logo, width: 70%),
-      ),
-    )
-  } else if metadata.at("uni-logo", default: "template/images/header_logo.png") != none {
-    grid(
-      columns: (0.5fr),
-      rows: (auto),
-      column-gutter: 100pt,
-      row-gutter: 7pt,
-      grid.cell(
-        colspan: 1,
-        align: center,
-        image(metadata.at("uni-logo", default: "template/images/header_logo.png"), width: 46%)
+        metadata.company-logo,
       ),
     )
   } else if metadata.at("company-logo", default: none) != none {
@@ -123,8 +111,20 @@
       grid.cell(
         colspan: 1,
         align: center,
-        image(company-logo, width: 46%),
+        metadata.company-logo,
       )
+    )
+  } else {
+    grid(
+      columns: (0.5fr),
+      rows: (auto),
+      column-gutter: 100pt,
+      row-gutter: 7pt,
+      grid.cell(
+        colspan: 1,
+        align: center,
+        metadata.at("uni-logo", default: image("template/images/header_logo.png", width: 46%))
+      ),
     )
   }
   v(equal-spacing)
@@ -146,7 +146,7 @@
 
   // Middle section
   if language == "de" {
-    text(1.1em, [vorgelegt am #metadata.at("date-of-publication", default: datetime.today().display())])
+    text(1.1em, [vorgelegt am #metadata.at("date-of-publication", default: datetime.today().display("[day].[month].[year]"))])
   } else {
     text(1.1em, [published on #metadata.at("date-of-publication", default: datetime.today().display())])
   }
