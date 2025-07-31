@@ -4,6 +4,7 @@
 
   // Main Metadata for the title page
   metadata: (
+    paper_type: [],
     title: [PTB Template],
     student-id: "",
     authors: (),
@@ -131,6 +132,7 @@
 
   // Title settings
   let line-length = 90%
+  text(1em, weight: 700, baseline: -13.5pt, metadata.paper_type)
   line(length: line-length)
   text(2em, weight: 700, metadata.title)
   line(length: line-length)
