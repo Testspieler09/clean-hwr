@@ -12,7 +12,7 @@ on the dashboard and searching for `clean-hwr`.
 
 Alternatively, you can use the CLI to kick this project off using the command
 ```
-typst init @preview/clean-hwr:0.1.2
+typst init @preview/clean-hwr:0.1.3
 ```
 
 Typst will create a new directory with all the files needed to get you started.
