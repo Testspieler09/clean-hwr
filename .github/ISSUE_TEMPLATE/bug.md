@@ -26,25 +26,25 @@ assignees: ''
 
 ## Description
 
-*Please provide a clear and concise description of the issue you are facing or the enhancement you are proposing.*
+<!-- Please provide a clear and concise description of the issue you are facing or the enhancement you are proposing. -->
 
 ---
 
 ## Expected Behavior
 
-*Describe what you expected to happen.*
+<!-- Describe what you expected to happen. -->
 
 ---
 
 ## Actual Behavior
 
-*Describe what actually happened. Include any error messages or unexpected results.*
+<!-- Describe what actually happened. Include any error messages or unexpected results. -->
 
 ---
 
 ## Steps to Reproduce
 
-*Outline the steps needed to reproduce the issue. If applicable, provide a minimal example or code snippet.*
+<!-- Outline the steps needed to reproduce the issue. If applicable, provide a minimal example or code snippet. -->
 
 1. Step one
 2. Step two
@@ -54,13 +54,13 @@ assignees: ''
 
 ## Screenshots
 
-*If applicable, add screenshots to help explain your problem.*
+<!-- If applicable, add screenshots to help explain your problem. -->
 
 ---
 
 ## Additional Information
 
-*Add any other context or additional information about the issue here.*
+<!-- Add any other context or additional information about the issue here. --> 
 
 ---
 
