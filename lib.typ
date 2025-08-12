@@ -39,7 +39,6 @@
     title: "",
     entries: (),
     disable-back-references: none,
-    // disable-back-references: false
   ),
   acronyms: (
     title: "",
@@ -85,10 +84,8 @@
     init-acronyms(acronyms.entries)
   }
 
-  if glossary.entries != () {
-    show: make-glossary
-    register-glossary(glossary.entries)
-  }
+  show: make-glossary
+  register-glossary(if glossary.entries != () {glossary.entries} else {((key:"KPI", short: "KPI", long: "Key Performance Indicator"),)})
 
   // SETUP Title page
   let equal-spacing = 0.25fr
