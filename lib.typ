@@ -37,7 +37,8 @@
   // All the lists and outlines
   glossary: (
     title: "",
-    entries: ()
+    entries: (),
+    disable-back-references: none,
   ),
   acronyms: (
     title: "",
@@ -70,6 +71,7 @@
   body,
 ) = {
   import "@preview/acrostiche:0.6.0": *
+  import "@preview/glossarium:0.5.8": *
 
   set document(author: metadata.authors, title: metadata.title)
   set page(numbering: none, number-align: center)
@@ -81,6 +83,9 @@
   if acronyms.entries != () {
     init-acronyms(acronyms.entries)
   }
+
+  show: make-glossary
+  register-glossary(if glossary.entries != () {glossary.entries} else {((key:"KPI", short: "KPI", long: "Key Performance Indicator"),)})
 
   // SETUP Title page
   let equal-spacing = 0.25fr
@@ -312,12 +317,8 @@
 
   // Glossary
   if glossary.entries != () {
-    import "@preview/glossarium:0.5.8": *
-    show: make-glossary
-    register-glossary(glossary.entries)
-
     heading(glossary.at("title", default: if language == "de" { "Glossar" } else { "Glossary" }), numbering: none)
-    print-glossary(glossary.entries, show-all: true)
+    print-glossary(glossary.entries, show-all: true, disable-back-references: glossary.at("disable-back-references", default: false))
     pagebreak()
   }
 
