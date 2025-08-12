@@ -38,7 +38,8 @@
   glossary: (
     title: "",
     entries: (),
-    disable-back-references: false
+    disable-back-references: none,
+    // disable-back-references: false
   ),
   acronyms: (
     title: "",
@@ -71,6 +72,7 @@
   body,
 ) = {
   import "@preview/acrostiche:0.6.0": *
+  import "@preview/glossarium:0.5.8": *
 
   set document(author: metadata.authors, title: metadata.title)
   set page(numbering: none, number-align: center)
@@ -81,6 +83,11 @@
   // SETUP Acronyms
   if acronyms.entries != () {
     init-acronyms(acronyms.entries)
+  }
+
+  if glossary.entries != () {
+    show: make-glossary
+    register-glossary(glossary.entries)
   }
 
   // SETUP Title page
@@ -313,12 +320,8 @@
 
   // Glossary
   if glossary.entries != () {
-    import "@preview/glossarium:0.5.8": *
-    show: make-glossary
-    register-glossary(glossary.entries)
-
     heading(glossary.at("title", default: if language == "de" { "Glossar" } else { "Glossary" }), numbering: none)
-    print-glossary(glossary.entries, show-all: true, disable-back-references: glossary.disable-back-references)
+    print-glossary(glossary.entries, show-all: true, disable-back-references: glossary.at("disable-back-references", default: false))
     pagebreak()
   }
 
