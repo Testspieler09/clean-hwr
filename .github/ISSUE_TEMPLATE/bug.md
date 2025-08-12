@@ -8,14 +8,10 @@ assignees: ''
 ---
 
 **Template Version:**
-- [ ] 0.1.0
-- [ ] 0.1.1
-- [ ] 0.1.2
-- [ ] 0.1.3
-- [ ] X.X.X (please specify)
+X.X.X (please specify)
 
 **Typst Version (if applicable):**
-- [ ] X.X.X (please specify)
+X.X.X (please specify)
 
 **I use this template:**
 - [ ] In the online editor
