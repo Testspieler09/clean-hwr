@@ -12,7 +12,7 @@ on the dashboard and searching for `clean-hwr`.
 
 Alternatively, you can use the CLI to kick this project off using the command
 ```
-typst init @preview/clean-hwr:0.1.3
+typst init @preview/clean-hwr:0.1.4
 ```
 
 Typst will create a new directory with all the files needed to get you started.
@@ -62,7 +62,8 @@ The `hwr(...)` function is the main entry point to configure and render the **PT
         long: "Typst Typesetting System",
         description: "A modern alternative to LaTeX."
       ),
-    )
+    ),
+    disable-back-references: true,
   ),
 
   acronyms: (
