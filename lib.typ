@@ -37,7 +37,8 @@
   // All the lists and outlines
   glossary: (
     title: "",
-    entries: ()
+    entries: (),
+    disable-back-references: false
   ),
   acronyms: (
     title: "",
@@ -317,7 +318,7 @@
     register-glossary(glossary.entries)
 
     heading(glossary.at("title", default: if language == "de" { "Glossar" } else { "Glossary" }), numbering: none)
-    print-glossary(glossary.entries, show-all: true)
+    print-glossary(glossary.entries, show-all: true, disable-back-references: glossary.disable-back-references)
     pagebreak()
   }
 
