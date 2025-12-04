@@ -7,7 +7,7 @@
 #import "@preview/glossarium:0.5.9": *
 
 // Count words automatically
-#import "@preview/wordometer:0.1.4": word-count, total-words
+#import "@preview/wordometer:0.1.5": word-count, total-words
 #show: word-count
 
 #show: hwr.with(
