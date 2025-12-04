@@ -79,8 +79,8 @@
 
   body,
 ) = {
-  import "@preview/acrostiche:0.6.0": *
-  import "@preview/glossarium:0.5.8": *
+  import "@preview/acrostiche:0.7.0": *
+  import "@preview/glossarium:0.5.9": *
 
   set document(author: metadata.authors, title: metadata.title)
   set page(numbering: none, number-align: center)
