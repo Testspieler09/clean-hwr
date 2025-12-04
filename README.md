@@ -12,7 +12,7 @@ on the dashboard and searching for `clean-hwr`.
 
 Alternatively, you can use the CLI to kick this project off using the command
 ```
-typst init @preview/clean-hwr:0.1.3
+typst init @preview/clean-hwr:0.1.4
 ```
 
 Typst will create a new directory with all the files needed to get you started.
@@ -40,8 +40,18 @@ The `hwr(...)` function is the main entry point to configure and render the **PT
     (key: "GitHub", value: "yourhandle", index: 0),
   ),
 
+  // Custom labels for the signatures on the title page
+  label-signature-left: [],
+  label-signature-right: [],
+
   word-count: total-words, // Optional: total word count
   custom-declaration-of-authorship: [], // Optional override for default declaration
+
+  confidentiality-notice: (
+    title: "Confidentiality Notice", // Needs to be set
+    content: [...],
+    page-idx: 1, // Needed Number 0-8
+  ),
 
   abstract: [
     This report analyzes...
@@ -62,7 +72,8 @@ The `hwr(...)` function is the main entry point to configure and render the **PT
         long: "Typst Typesetting System",
         description: "A modern alternative to LaTeX."
       ),
-    )
+    ),
+    disable-back-references: true,
   ),
 
   acronyms: (

@@ -20,10 +20,19 @@
     company-logo: none,
   ),
   custom-entries: (),
+  label-signature-left: [],
+  label-signature-right: [],
   word-count: none,
 
   // Declaration of authorship
   custom-declaration-of-authorship: [],
+
+  // Confidentiality notice
+  confidentiality-notice: (
+    title: [],
+    content: [],
+    page-idx: none,
+  ),
 
   // Abstract content
   abstract: [#lorem(30)],
@@ -39,7 +48,6 @@
     title: "",
     entries: (),
     disable-back-references: none,
-    // disable-back-references: false
   ),
   acronyms: (
     title: "",
@@ -80,15 +88,27 @@
   let sup = if language == "de" [Kapitel] else [Chapter]
   set heading(numbering: "1.1", supplement: sup)
 
+  let render-confidentiality-notice(page-idx: none) = {
+    if confidentiality-notice.page-idx == page-idx and confidentiality-notice.title != [] {
+      heading(
+        outlined: false,
+        numbering: none,
+        confidentiality-notice.title,
+      )
+      confidentiality-notice.content
+      pagebreak()
+    }
+  }
+
   // SETUP Acronyms
   if acronyms.entries != () {
     init-acronyms(acronyms.entries)
   }
 
-  if glossary.entries != () {
-    show: make-glossary
-    register-glossary(glossary.entries)
-  }
+  show: make-glossary
+  register-glossary(if glossary.entries != () {glossary.entries} else {((key:"KPI", short: "KPI", long: "Key Performance Indicator"),)})
+
+  render-confidentiality-notice(page-idx: 0)
 
   // SETUP Title page
   let equal-spacing = 0.25fr
@@ -223,29 +243,36 @@
   v(2*equal-spacing)
 
   if language == "de" {
-    table(
-      columns: (50%,50%),
-      stroke: none,
-      inset: 20pt,
-      align: left,
-      [#line(length: 100%)Unterschrift Ausbilder*in],
-      [#line(length: 100%)Unterschrift Betreuer*in (HWR)],
-    )
+    if label-signature-left == [] {
+      label-signature-left = "Unterschrift Ausbilder*in"
+    }
+    if label-signature-right == [] {
+      label-signature-right = "Unterschrift Betreuer*in (HWR)"
+    }
   } else {
-    table(
-      columns: (50%,50%),
-      stroke: none,
-      inset: 20pt,
-      align: left,
-      [#line(length: 100%)Signature of Supervisor (Company)],
-      [#line(length: 100%)Signature of Supervisor (HWR)],
-    )
+    if label-signature-left == [] {
+      label-signature-left = "Signature of Supervisor (Company)"
+    }
+    if label-signature-right == [] {
+      label-signature-right = "Signature of Supervisor (HWR)"
+    }
   }
+
+  table(
+    columns: (50%,50%),
+    stroke: none,
+    inset: 20pt,
+    align: left,
+    [#line(length: 100%)#label-signature-left],
+    [#line(length: 100%)#label-signature-right],
+  )
 
   v(equal-spacing)
   pagebreak()
   set align(left)
   // END OF TITLE PAGE
+
+  render-confidentiality-notice(page-idx: 1)
 
   // Abstract
   set page(numbering: "I", number-align: center)
@@ -269,6 +296,8 @@
     ]
     pagebreak()
   }
+
+  render-confidentiality-notice(page-idx: 2)
 
   // Declaration of authorship
   if custom-declaration-of-authorship != [] {
@@ -314,9 +343,13 @@
     pagebreak()
   }
 
+  render-confidentiality-notice(page-idx: 3)
+
   // Content outline
   outline(depth: 3, indent: 2%)
   pagebreak()
+
+  render-confidentiality-notice(page-idx: 4)
 
   // Glossary
   if glossary.entries != () {
@@ -325,12 +358,16 @@
     pagebreak()
   }
 
+  render-confidentiality-notice(page-idx: 5)
+
   // Acronyms
   if acronyms.entries != () {
     set text(top-edge: "ascender", bottom-edge: "descender")
     print-index(outlined: true, title: acronyms.at("title", default: if language == "de" { "Acronyme" } else { "Acronyms" }))
     pagebreak()
   }
+
+  render-confidentiality-notice(page-idx: 6)
 
   // Display indices of figures, tables, and listings.
   let default-titles = (
@@ -389,10 +426,15 @@
     bibliography-object
   }
 
+  render-confidentiality-notice(page-idx: 7)
+
   // Appendix
   if appendix.enabled {
     pagebreak()
     heading(appendix.at("title", default: if language == "de" { "Anhang" } else { "Appendix" }), numbering: none)
     appendix.content
   }
+
+  render-confidentiality-notice(page-idx: 8)
+
 }
