@@ -1,4 +1,4 @@
-#import "@preview/clean-hwr:0.1.4": *
+#import "@preview/clean-hwr:0.1.5": *
 
 // These packages are used to displaying the acronyms and glossaries
 // They need to be imported here so you can use #acr / #gls
