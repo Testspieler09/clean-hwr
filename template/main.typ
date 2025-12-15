@@ -1,4 +1,5 @@
-#import "@preview/clean-hwr:0.1.5": *
+// #import "@preview/clean-hwr:0.1.5": *
+#import "../lib.typ": *
 
 // These packages are used to displaying the acronyms and glossaries
 // They need to be imported here so you can use #acr / #gls
@@ -13,7 +14,7 @@
   metadata: (
     title: [HWR PTB Template],
     student-id: "12345678910",
-    authors: ("Alice Becker", "Bob Klein"),
+    authors: "Alice Becker",
     field-of-study: "Computer Science",
     company: "Example Company",
     enrollment-year: "2024",

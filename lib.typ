@@ -7,7 +7,7 @@
     paper_type: [],
     title: [PTB Template],
     student-id: "",
-    authors: (),
+    authors: none,
     company: "",
     enrollment-year: "",
     semester: "",
@@ -166,11 +166,19 @@
   line(length: line-length)
 
   // Author information.
+  let authorsText = "";
+
+  if type(metadata.authors) == str {
+    authorsText = metadata.authors;
+  } else if type(metadata.authors) == array {
+    authorsText = metadata.authors.join(", ");
+  }
+
   pad(
     top: 2.9em,
     text(
       1.3em,
-      strong(metadata.authors.join(", "))
+      strong(authorsText)
     )
   )
 

@@ -28,7 +28,7 @@ The `hwr(...)` function is the main entry point to configure and render the **PT
   metadata: (
     title: ["My Report Title"],
     student-id: "12345678",
-    authors: ("Your Name",), // The `,` is mandatory for an array with a single entry
+    authors: "Your Name", // Or an array for multiple authors: ("1", "2")
     company: "Example Corp",
     enrollment-year: "2024",
     semester: "2",
