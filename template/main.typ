@@ -8,7 +8,6 @@
 
 // Count words automatically
 #import "@preview/wordometer:0.1.5": word-count, total-words
-#show: word-count
 
 #show: hwr.with(
   metadata: (
@@ -46,6 +45,9 @@
   listing-index: (enabled: true, title: "Index of Code Snippets"),
   word-count: total-words,
 )
+
+#{[
+#show: word-count.with(exclude: (raw.where(block: true)))
 
 = Introduction to Quantum Computing
 Quantum computing leverages the principles of quantum mechanics to process information. Unlike classical bits, which are binary, quantum bits — or #gls("quantum_superposition") — can exist in a *superposition* of states.
@@ -105,3 +107,5 @@ fn main() {
 
 == Subchapter: Outlook
 #lorem(60)
+
+]}
