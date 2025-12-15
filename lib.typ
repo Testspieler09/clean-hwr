@@ -363,7 +363,7 @@
   // Acronyms
   if acronyms.entries != () {
     set text(top-edge: "ascender", bottom-edge: "descender")
-    print-index(outlined: true, title: acronyms.at("title", default: if language == "de" { "Acronyme" } else { "Acronyms" }))
+    print-index(outlined: true, title: acronyms.at("title", default: if language == "de" { "Akronyme" } else { "Acronyms" }))
     pagebreak()
   }
 
