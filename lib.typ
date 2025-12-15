@@ -122,12 +122,12 @@
       rows: (auto),
       grid.cell(
         colspan: 1,
-        align: center,
+        align: center + horizon,
         metadata.uni-logo,
       ),
       grid.cell(
         colspan: 1,
-        align: center,
+        align: center + horizon,
         metadata.company-logo,
       ),
     )
@@ -139,7 +139,7 @@
       row-gutter: 7pt,
       grid.cell(
         colspan: 1,
-        align: center,
+        align: center + horizon,
         metadata.company-logo,
       )
     )
@@ -151,7 +151,7 @@
       row-gutter: 7pt,
       grid.cell(
         colspan: 1,
-        align: center,
+        align: center + horizon,
         metadata.at("uni-logo", default: image("template/images/header_logo.png", width: 46%))
       ),
     )
