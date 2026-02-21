@@ -1,144 +1,184 @@
 # Typst Template for HWR (Berlin School of Economics and Law)
 
-Welcome! This repository offers two Typst templates (English and German) designed to help you write your papers following the HWR style guidelines.
+This repository provides a **Typst template** for writing academic papers following the style guidelines of the **Berlin School of Economics and Law (Hochschule für Wirtschaft und Recht Berlin)**.
+
+It includes support for **English and German** papers only. The template handles the full structure of a paper, including title page, abstract, declaration of authorship, glossary, indices, bibliography, and appendix.
 
 > [!CAUTION]
-> The logo included in this template is the property of the Berlin School of Economics and Law (Hochschule für Wirtschaft und Recht Berlin).
-> It is used under their licensing terms and should not be misappropriated or reproduced outside the scope permitted by the institution.
+>
+> The included logo is property of the Berlin School of Economics and Law and may only be used under their licensing terms.
+
+## Features
+
+* Full HWR-style paper layout with minimal setup.
+* Automatic handling of:
+  * Acronyms
+  * Glossary
+  * Figure, table, and listing indices
+  * Bibliography formatting with CSL
+* Optional features: confidentiality notice, appendix, word count, gender-inclusive language note.
+* Two public functions:
+  1. `hwr(...)` - main template renderer.
+  2. `render-confidentiality-notice(...)` - standalone confidentiality notice page.
 
 ## Usage
-You can use this template in the Typst web app by clicking "Start from template"
-on the dashboard and searching for `clean-hwr`.
 
-Alternatively, you can use the CLI to kick this project off using the command
+### Web App
+
+1. Open [Typst Web](https://typst.app).
+2. Click **Start from Template** and search for `clean-hwr`.
+
+### CLI
+
+```bash
+typst init @preview/clean-hwr:0.2.0
 ```
-typst init @preview/clean-hwr:0.1.5
-```
 
-Typst will create a new directory with all the files needed to get you started.
+This creates a new project folder with all necessary files.
 
-## Configuration
-The `hwr(...)` function is the main entry point to configure and render the **PTB Template**. Below is an overview of the available configuration fields and how to use them:
+## Main Functions
+
+### `hwr(...)` – Render a full HWR paper
+
+This is the primary entry point. It sets up your paper with all front matter, main body, bibliography, and appendix.
+
+**Basic Example:**
 
 ```typst
-#show: hwr.with(
+#hwr(
   language: "en",
   main-font: "TeX Gyre Termes",
-
   metadata: (
-    title: ["My Report Title"],
-    student-id: "12345678",
-    authors: "Your Name", // Or an array for multiple authors: ("1", "2")
-    company: "Example Corp",
+    title: [My Thesis],
+    authors: ["Max Mustermann"],
+    student-id: "123456",
     enrollment-year: "2024",
     semester: "2",
+    company: "Example Corp",
     company-supervisor: "Jane Doe",
-    company-logo: image("images/logo.png", width: 46%),
+    company-logo: image("images/logo.png", width: 46%)
   ),
-
-  custom-entries: (
-    (key: "GitHub", value: "yourhandle", index: 0),
-  ),
-
-  // Custom labels for the signatures on the title page
-  label-signature-left: [],
-  label-signature-right: [],
-
-  word-count: total-words, // Optional: total word count
-  custom-declaration-of-authorship: [], // Optional override for default declaration
-
-  confidentiality-notice: (
-    title: "Confidentiality Notice", // Needs to be set
-    content: [...],
-    page-idx: 1, // Needed Number 0-8
-  ),
-
   abstract: [
-    This report analyzes...
+    This thesis explores the impact of digital marketing on consumer behavior...
   ],
+)[
+  = Introduction
+  The main content of your paper goes here.
 
-  // Only relevant for `language = "de"`
-  note-gender-inclusive-language: (
-    enabled: false,
-    title: "Hinweis zum sprachlichen Gendern"
-  ),
+  = Methodology
+  Explain your research methods.
 
-  glossary: (
-    title: "Glossary",
-    entries: (
-      (
-        key: "typst",
-        short: "Typst",
-        long: "Typst Typesetting System",
-        description: "A modern alternative to LaTeX."
-      ),
-    ),
-    disable-back-references: true,
-  ),
-
-  acronyms: (
-    title: "Acronyms",
-    entries: (
-      "AI": ("Artificial Intelligence", "Artificial Intelligence"),
-    )
-  ),
-
-  figure-index: (
-    enabled: true,
-    title: "List of Figures"
-  ),
-
-  table-index: (
-    enabled: true,
-    title: "List of Tables"
-  ),
-
-  listing-index: (
-    enabled: true,
-    title: "List of Listings"
-  ),
-
-  bibliography-object: bibliography("refs.bib"),
-  citation-style: "template/hwr_citation.csl",
-
-  appendix: (
-    enabled: true,
-    content: [
-      = Appendix
-      Additional data and figures here...
-    ]
-  ),
-)
+  = Results
+  Present findings and analysis.
+]
 ```
 
-### Notes:
-* **Fields marked optional** (like `word-count` or `custom-declaration-of-authorship`) may be omitted if not needed.
-* `abstract` is shown before the table of contents.
-* The `metadata.university` and `metadata.date-of-publication` will be filled automatically unless explicitly overridden.
+**Highlights:**
 
-## How to Create a PDF (locally)
-Once you’ve made your changes, you can compile your document into a PDF by running this command in the root folder of the project:
+* `metadata` contains all title-page information. Required fields: `title`, `authors`, `student-id`.
+* `abstract` appears before the table of contents.
+* `body` is the main content, written inside the square brackets.
+* Optional features: glossary, acronyms, appendix, word count, confidentiality notice.
+
+### `render-confidentiality-notice(...)` – Standalone Notice Page
+
+Use this if you want a separate confidentiality notice page outside the main template flow.
+
+**Example:**
+
+```typst
+#render-confidentiality-notice((
+  title: [Confidentiality Notice],
+  content: [
+    This document contains confidential information and may not be distributed without permission.
+  ]
+))
+```
+
+This renders:
+
+1. An unnumbered heading with your title.
+2. The content text.
+3. A page break after the notice.
+
+## Configuration Overview
+
+Some important fields for students:
+
+| Field                                    | Description                                 | Required  |
+| ---------------------------------------- | ------------------------------------------- | --------- |
+| `language`                               | Document language (`"en"` or `"de"`)        | no        |
+| `main-font`                              | Font used throughout the document           | no        |
+| `metadata.paper-type`                    | Type of paper (e.g., Thesis, Report)        | no        |
+| `metadata.title`                         | Paper title                                 | yes       |
+| `metadata.student-id`                    | Student ID                                  | yes       |
+| `metadata.authors`                       | List of authors                             | yes       |
+| `metadata.company`                       | Company / institution                       | no        |
+| `metadata.enrollment-year`               | Year of enrollment                          | no        |
+| `metadata.semester`                      | Semester number                             | no        |
+| `metadata.company-supervisor`            | Name of company supervisor                  | no        |
+| `metadata.authors-per-line`              | How many authors per line on title page     | no        |
+| `metadata.field-of-study`                | Field of study                              | no        |
+| `metadata.university`                    | University name                             | no        |
+| `metadata.date-of-publication`           | Date of publication                         | no        |
+| `metadata.uni-logo`                      | University logo image                       | no        |
+| `metadata.company-logo`                  | Company logo image                          | no        |
+| `custom-entries`                         | Additional metadata entries for title page  | no        |
+| `label-signature-left`                   | Label below the left signature line         | no        |
+| `label-signature-right`                  | Label below the right signature line        | no        |
+| `word-count`                             | Optional word count displayed on title page | no        |
+| `custom-declaration-of-authorship`       | Overrides default authorship declaration    | no        |
+| `confidentiality-notice.title`           | Title of confidentiality notice             | no        |
+| `confidentiality-notice.content`         | Content of confidentiality notice           | no        |
+| `confidentiality-notice.page-idx`        | Placement index for notice (0–8)            | no        |
+| `abstract`                               | Abstract content of the document            | yes       |
+| `note-gender-inclusive-language.enabled` | Enable gender-inclusive note (German only)  | no        |
+| `note-gender-inclusive-language.title`   | Title for the gender-inclusive note         | no        |
+| `glossary.title`                         | Title of glossary section                   | no        |
+| `glossary.entries`                       | Terms and definitions                       | no        |
+| `glossary.disable-back-references`       | Disable back-references in glossary         | no        |
+| `acronyms.title`                         | Title of acronyms section                   | no        |
+| `acronyms.entries`                       | Acronyms used in the paper                  | no        |
+| `figure-index.enabled`                   | Include list of figures                     | no        |
+| `figure-index.title`                     | Title of list of figures                    | no        |
+| `table-index.enabled`                    | Include list of tables                      | no        |
+| `table-index.title`                      | Title of list of tables                     | no        |
+| `listing-index.enabled`                  | Include list of listings                    | no        |
+| `listing-index.title`                    | Title of list of listings                   | no        |
+| `bibliography-object`                    | Bibliography data source                    | no        |
+| `citation-style`                         | CSL file for citations                      | no        |
+| `appendix.enabled`                       | Enable appendix section                     | no        |
+| `appendix.title`                         | Title of appendix section                   | no        |
+| `appendix.content`                       | Content of appendix section                 | no        |
+
+> Optional fields can be omitted if not needed.
+
+## Generating a PDF
+
+Once your paper is ready, compile it locally with:
 
 ```bash
 typst compile main.typ
 ```
 
-This will generate a `main.pdf` file with your paper ready to go.
+This produces `main.pdf` in your project folder.
 
-> [!NOTE]
-> Make sure all needed fonts are installed locally
+**Note:** Make sure all required fonts are installed locally.
 
 ## Dependencies
-This template makes use of two Typst packages to add extra functionality:
 
-* [`wordometer`](https://typst.app/universe/package/wordometer) - for counting the words automatically
-* [`glossarium`](https://typst.app/universe/package/glossarium/) – for managing glossaries
-* [`acrostiche`](https://typst.app/universe/package/acrostiche/) – for handling acronyms easily
+This template relies on the following Typst packages:
 
-These are fetched automatically when compiling the document, so you don’t need to install them manually.
+* [`wordometer`](https://typst.app/universe/package/wordometer) - automatic word count
+* [`glossarium`](https://typst.app/universe/package/glossarium) - glossary management
+* [`acrostiche`](https://typst.app/universe/package/acrostiche) - acronym management
+* [`linguify`](https://typst.app/universe/package/linguify/) - localizatoin setup
 
-## Quick Shoutout
-Big thanks to [**Patrick O'Brien**](https://github.com/POBrien333) for creating the citation style file used in this template. You can find it at:
+These are fetched automatically during compilation.
+
+## Citation Style
+
+The template uses a CSL file for HWR-style citations, originally provided by **Patrick O’Brien**:
 
 ```
 hwr_citation.csl
@@ -146,5 +186,11 @@ hwr_citation.csl
 
 Original source: [Berlin School of Economics and Law CSL Style](https://github.com/citation-style-language/styles/blob/master/berlin-school-of-economics-and-law-international-marketing-management.csl)
 
-## Need Help or Want to Contribute?
-If you run into any issues or have ideas to improve the template, please open an issue or submit a pull request. Your feedback is always welcome!
+## Contributing & Help
+
+If you encounter issues or want to improve the template:
+
+* Open an issue
+* Submit a pull request
+
+Your feedback is always welcome!

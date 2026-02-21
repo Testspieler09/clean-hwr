@@ -1,10 +1,190 @@
+// TODO: check dep versions
+#import "@preview/linguify:0.5.0": set-database, load-ftl-data, linguify
+#import "@preview/acrostiche:0.7.0": init-acronyms
+#import "@preview/glossarium:0.5.10": make-glossary, register-glossary
+
+#import "pages/confidentiality_notice.typ": _render-confidentiality-notice-if-right-place, render-confidentiality-notice
+#import "pages/title_page.typ": _render-title-page
+#import "pages/abstract.typ": _render-abstract
+#import "pages/note_on_gender_inclusive_language.typ": _render-note-on-gender-inclusive-lang
+#import "pages/declaration_of_authorship.typ": _render-declaration-of-authorship
+#import "pages/glossary.typ": _render-glossary
+#import "pages/acronyms.typ": _render-acronyms
+#import "pages/indices_of_everything.typ": _render-indices-of-everything
+#import "pages/bibliography.typ": _set-biblography
+#import "pages/appendix.typ": _render-appendix
+
+/// Main entry point for rendering an HWR-style academic paper template.
+///
+/// This function configures document-wide settings (language, fonts,
+/// numbering, metadata, glossary, acronyms, bibliography, appendix, etc.)
+/// and renders all structural components in the correct order:
+///
+/// 1. Optional confidentiality notice
+/// 2. Title page
+/// 3. Abstract
+/// 4. Declaration of authorship
+/// 5. Table of contents
+/// 6. Glossary and acronyms
+/// 7. Indices (figures, tables, listings)
+/// 8. Main body
+/// 9. Bibliography
+/// 10. Appendix
+///
+/// It also initializes localization, glossary handling, and acronym support.
+///
+/// Parameters
+///
+/// - language (str, default: `"en"`):
+///   Document language (e.g. `"en"` or `"de"`).
+///
+/// - main-font (str, default: `"TeX Gyre Termes"`):
+///   Font family used for the entire document.
+///
+/// - metadata (dictionary):
+///   Main metadata for the title page.
+///   Defaults:
+///   ```typst
+///   (
+///     paper-type: [],
+///     title: [PTB Template],
+///     student-id: "",
+///     authors: none,
+///     company: "",
+///     enrollment-year: "",
+///     semester: "",
+///     company-supervisor: "",
+///     authors-per-line: 2,
+///     field-of-study: none,
+///     university: none,
+///     date-of-publication: none,
+///     uni-logo: none,
+///     company-logo: none,
+///   )
+///   ```
+///
+/// - custom-entries (dictionary, default: `()`):
+///   Additional custom metadata entries for the title page.
+///
+/// - label-signature-left (content, default: []):
+///   Label shown below the left signature line.
+///
+/// - label-signature-right (content, default: []):
+///   Label shown below the right signature line.
+///
+/// - word-count (content or none, default: `none`):
+///   Optional word count displayed on the title page.
+///
+/// - custom-declaration-of-authorship (content, default: []):
+///   Overrides the default declaration text.
+///
+/// - confidentiality-notice (dictionary):
+///   ```typst
+///   (
+///     title: [],
+///     content: [],
+///     page-idx: none,
+///   )
+///   ```
+///   Defines an optional confidentiality notice and its placement.
+///
+/// - abstract (content, default: [#lorem(30)]):
+///   Abstract text of the document.
+///
+/// - note-gender-inclusive-language (dictionary):
+///   ```typst
+///   (
+///     enabled: false,
+///     title: "",
+///   )
+///   ```
+///   Enables an optional note (typically for German-language papers).
+///
+/// - glossary (dictionary):
+///   ```typst
+///   (
+///     title: "",
+///     entries: (),
+///     disable-back-references: none,
+///   )
+///   ```
+///
+/// - acronyms (dictionary):
+///   ```typst
+///   (
+///     title: "",
+///     entries: (),
+///   )
+///   ```
+///
+/// - figure-index (dictionary):
+///   ```typst
+///   (
+///     enabled: false,
+///     title: "",
+///   )
+///   ```
+///
+/// - table-index (dictionary):
+///   ```typst
+///   (
+///     enabled: false,
+///     title: "",
+///   )
+///   ```
+///
+/// - listing-index (dictionary):
+///   ```typst
+///   (
+///     enabled: false,
+///     title: "",
+///   )
+///   ```
+///
+/// - bibliography-object (content or none, default: `none`):
+///   Bibliography data source.
+///
+/// - citation-style (str, default: `"hwr_citation.csl"`):
+///   CSL file used for citation formatting.
+///
+/// - appendix (dictionary):
+///   ```typst
+///   (
+///     enabled: false,
+///     title: "",
+///     content: [],
+///   )
+///   ```
+///
+/// - body (content):
+///   Main document content.
+///
+/// Returns
+/// - content:
+///   Fully rendered academic document including front matter,
+///   main body, bibliography, and optional appendix.
+///
+/// Example
+/// ```typst
+/// #hwr(
+///   metadata: (
+///     title: [My Thesis],
+///     authors: [Max Mustermann],
+///     student-id: "123456",
+///   ),
+///   abstract: [This thesis explores ...],
+/// )[
+///   = Introduction
+///   This is the main content.
+/// ]
+/// ```
 #let hwr(
   language: "en",
   main-font: "TeX Gyre Termes",
 
   // Main Metadata for the title page
   metadata: (
-    paper_type: [],
+    paper-type: [],
     title: [PTB Template],
     student-id: "",
     authors: none,
@@ -13,6 +193,7 @@
     semester: "",
     company-supervisor: "",
     // These do not need to be changed by the user
+    authors-per-line: 2,
     field-of-study: none,
     university: none,
     date-of-publication: none,
@@ -79,26 +260,12 @@
 
   body,
 ) = {
-  import "@preview/acrostiche:0.7.0": *
-  import "@preview/glossarium:0.5.9": *
+  set-database(eval(load-ftl-data("./l10n", ("de", "en"))))
 
   set document(author: metadata.authors, title: metadata.title)
   set page(numbering: none, number-align: center)
   set text(font: main-font, lang: language)
-  let sup = if language == "de" [Kapitel] else [Chapter]
-  set heading(numbering: "1.1", supplement: sup)
-
-  let render-confidentiality-notice(page-idx: none) = {
-    if confidentiality-notice.page-idx == page-idx and confidentiality-notice.title != [] {
-      heading(
-        outlined: false,
-        numbering: none,
-        confidentiality-notice.title,
-      )
-      confidentiality-notice.content
-      pagebreak()
-    }
-  }
+  set heading(numbering: "1.1", supplement: linguify("chapter"))
 
   // SETUP Acronyms
   if acronyms.entries != () {
@@ -106,318 +273,52 @@
   }
 
   show: make-glossary
-  register-glossary(if glossary.entries != () {glossary.entries} else {((key:"KPI", short: "KPI", long: "Key Performance Indicator"),)})
+  register-glossary(glossary.entries)
 
-  render-confidentiality-notice(page-idx: 0)
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  // SETUP Title page
-  let equal-spacing = 0.25fr
-  set align(center)
-
-  // Logo settings
-  v(equal-spacing)
-  if metadata.at("uni-logo", default: none) != none and metadata.at("company-logo", default: none) != none {
-    grid(
-      columns: (1fr, 1fr),
-      rows: (auto),
-      grid.cell(
-        colspan: 1,
-        align: center + horizon,
-        metadata.uni-logo,
-      ),
-      grid.cell(
-        colspan: 1,
-        align: center + horizon,
-        metadata.company-logo,
-      ),
-    )
-  } else if metadata.at("company-logo", default: none) != none {
-    grid(
-      columns: (0.5fr),
-      rows: (auto),
-      column-gutter: 100pt,
-      row-gutter: 7pt,
-      grid.cell(
-        colspan: 1,
-        align: center + horizon,
-        metadata.company-logo,
-      )
-    )
-  } else {
-    grid(
-      columns: (0.5fr),
-      rows: (auto),
-      column-gutter: 100pt,
-      row-gutter: 7pt,
-      grid.cell(
-        colspan: 1,
-        align: center + horizon,
-        metadata.at("uni-logo", default: image("template/images/header_logo.png", width: 46%))
-      ),
-    )
-  }
-  v(equal-spacing)
-
-  // Title settings
-  let line-length = 90%
-  text(1em, weight: 700, baseline: -13.5pt, metadata.at("paper_type", default: []))
-  line(length: line-length)
-  text(2em, weight: 700, metadata.title)
-  line(length: line-length)
-
-  // Author information.
-  let authorsText = "";
-
-  if type(metadata.authors) == str {
-    authorsText = metadata.authors;
-  } else if type(metadata.authors) == array {
-    authorsText = metadata.authors.join(", ");
-  }
-
-  pad(
-    top: 2.9em,
-    text(
-      1.3em,
-      strong(authorsText)
-    )
+  _render-title-page(
+    language: language,
+    metadata: metadata,
+    custom-entries: custom-entries,
+    label-signature-left: label-signature-left,
+    label-signature-right: label-signature-right,
+    word-count: word-count,
   )
 
-  // Middle section
-  if language == "de" {
-    text(1.1em, [vorgelegt am #metadata.at("date-of-publication", default: datetime.today().display("[day].[month].[year]"))])
-  } else {
-    text(1.1em, [published on #metadata.at("date-of-publication", default: datetime.today().display())])
-  }
-  v(0.6em, weak: true)
-  $circle.filled.small$
-  v(0.6em, weak: true)
-  metadata.at("field-of-study", default: if language == "de" { "Informatik" } else { "Computer Science" })
-  v(0.6em, weak: true)
-  metadata.at("university", default: if language == "de" { "Hochschule für Wirtschaft und Recht Berlin" } else { "Berlin School of Economics and Law" })
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  v(equal-spacing)
+  _render-abstract(abstract: abstract)
+  _render-note-on-gender-inclusive-lang(note-gender-inclusive-language: note-gender-inclusive-language)
 
-  let merge-entries(defaults, customs) = {
-    let base = defaults
-    for entry in customs {
-      let idx = entry.at("index", default: base.len())
-      base.insert(idx, (entry.key, entry.value))
-    }
-    base
-  }
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  if language == "de" {
-    let default-entries = (
-      ("Unternehmen:", metadata.company),
-      ("Studienjahrgang:", metadata.enrollment-year),
-      ("Semester:", metadata.semester),
-      ("Matrikelnummer:", metadata.student-id),
-      ("Betreuer im Unternehmen:", metadata.company-supervisor),
-      ("Anzahl der Wörter:", word-count),
-    )
-
-    let final-entries = merge-entries(default-entries, custom-entries)
-
-    show table.cell.where(x: 0): strong
-    table(
-      columns: 2,
-      stroke: none,
-      align: left,
-      column-gutter: 5%,
-      ..final-entries.flatten()
-    )
-  } else {
-    let default-entries = (
-      ("Company:", metadata.company),
-      ("Enrollment Year:", metadata.enrollment-year),
-      ("Semester:", metadata.semester),
-      ("Student ID:", metadata.student-id),
-      ("Company Supervisor:", metadata.company-supervisor),
-      ("Word Count:", word-count),
-    )
-
-    let final-entries = merge-entries(default-entries, custom-entries)
-
-    show table.cell.where(x: 0): strong
-    table(
-      columns: 2,
-      stroke: none,
-      align: left,
-      column-gutter: 5%,
-      ..final-entries.flatten()
-    )
-  }
-
-  v(2*equal-spacing)
-
-  if language == "de" {
-    if label-signature-left == [] {
-      label-signature-left = "Unterschrift Ausbilder*in"
-    }
-    if label-signature-right == [] {
-      label-signature-right = "Unterschrift Betreuer*in (HWR)"
-    }
-  } else {
-    if label-signature-left == [] {
-      label-signature-left = "Signature of Supervisor (Company)"
-    }
-    if label-signature-right == [] {
-      label-signature-right = "Signature of Supervisor (HWR)"
-    }
-  }
-
-  table(
-    columns: (50%,50%),
-    stroke: none,
-    inset: 20pt,
-    align: left,
-    [#line(length: 100%)#label-signature-left],
-    [#line(length: 100%)#label-signature-right],
+  _render-declaration-of-authorship(
+    custom-declaration-of-authorship: custom-declaration-of-authorship,
+    metadata: metadata
   )
 
-  v(equal-spacing)
-  pagebreak()
-  set align(left)
-  // END OF TITLE PAGE
-
-  render-confidentiality-notice(page-idx: 1)
-
-  // Abstract
-  set page(numbering: "I", number-align: center)
-  v(1fr)
-  align(center)[
-    #heading(
-      outlined: false,
-      numbering: none,
-      text(0.85em, smallcaps[Abstract]),
-    )
-    #box(width: 90%)[#align(left)[#par(justify: true)[#abstract]]]
-  ]
-  v(1.618fr)
-  pagebreak()
-
-  if note-gender-inclusive-language.enabled and language == "de" {
-    heading(note-gender-inclusive-language.at("title", default: "Hinweis zum sprachlichen Gendern"), numbering: none)
-    [
-      Aus Gründen der besseren Lesbarkeit wird im Text verallgemeinernd das generische Maskulinum verwendet.
-      Diese Formulierungen umfassen gleichermaßen weibliche, männliche und diverse Personen.
-    ]
-    pagebreak()
-  }
-
-  render-confidentiality-notice(page-idx: 2)
-
-  // Declaration of authorship
-  if custom-declaration-of-authorship != [] {
-    custom-declaration-of-authorship
-  } else if language == "de" {
-    heading("Ehrenwörtliche Erkärung", numbering: none)
-    [
-      Ich erkläre ehrenwörtlich:
-
-       + dass ich meinen Praxistransferbericht selbstständig verfasst habe,
-       + dass ich die Übernahme wörtlicher Zitate aus der Literatur sowie die Verwendung der Gedanken anderer
-        Autoren an den entsprechenden Stellen innerhalb der Arbeit gekennzeichnet habe,
-       + dass ich meinen Praxistransferbericht bei keiner anderen Prüfung vorgelegt habe.
-
-       Ich bin mir bewusst, dass eine falsche Erklärung rechtliche Folgen haben wird.
-    ]
-    v(4.0em)
-
-    table(
-      columns: (50%,50%),
-      stroke: none,
-      inset: 20pt,
-      [#line(length: 100%)Ort, Datum], [#line(length: 100%)Unterschrift],
-    )
-    pagebreak()
-  } else {
-    heading("Declaration of Authorship", numbering: none)
-    [
-      I hereby declare that this work titled “#metadata.title” is my own and has been carried out independently,
-      without the use of any sources or aids other than those stated.
-      All passages that have been quoted directly or indirectly from other works have been clearly marked and referenced.
-
-      I confirm that this work has not been submitted, either in whole or in part, for any other academic degree or qualification.
-    ]
-    v(4.0em)
-
-    table(
-      columns: (50%,50%),
-      stroke: none,
-      inset: 20pt,
-      [#line(length: 100%)City, Date], [#line(length: 100%)Signature],
-    )
-    pagebreak()
-  }
-
-  render-confidentiality-notice(page-idx: 3)
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
   // Content outline
   outline(depth: 3, indent: 2%)
   pagebreak()
 
-  render-confidentiality-notice(page-idx: 4)
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  // Glossary
-  if glossary.entries != () {
-    heading(glossary.at("title", default: if language == "de" { "Glossar" } else { "Glossary" }), numbering: none)
-    print-glossary(glossary.entries, show-all: true, disable-back-references: glossary.at("disable-back-references", default: false))
-    pagebreak()
-  }
+  _render-glossary(glossary: glossary)
 
-  render-confidentiality-notice(page-idx: 5)
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  // Acronyms
-  if acronyms.entries != () {
-    set text(top-edge: "ascender", bottom-edge: "descender")
-    print-index(outlined: true, title: acronyms.at("title", default: if language == "de" { "Akronyme" } else { "Acronyms" }))
-    pagebreak()
-  }
+  _render-acronyms(acronyms: acronyms)
 
-  render-confidentiality-notice(page-idx: 6)
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  // Display indices of figures, tables, and listings.
-  let default-titles = (
-    figure-title: "Index of Figures",
-    table-title: "Index of Tables",
-    listing-title: "Index of Listings"
+  _render-indices-of-everything(
+    figure-index: figure-index,
+    table-index: table-index,
+    listing-index: listing-index,
   )
-  if language == "de" {
-    default-titles.figure-title = "Abbildungsverzeichnis"
-    default-titles.table-title = "Tabellenverzeichnis"
-    default-titles.listing-title = "Aufzählungsverzeichnis"
-  }
-  let fig-t(kind) = figure.where(kind: kind)
-  if figure-index.enabled or table-index.enabled or listing-index.enabled {
-    show outline: set heading(outlined: true)
-    context {
-      let imgs = figure-index.enabled
-      let tbls = table-index.enabled
-      let lsts = listing-index.enabled
-      if imgs {
-        outline(
-          title: figure-index.at("title", default: default-titles.figure-title),
-          target: fig-t(image),
-        )
-      }
-      if tbls {
-        outline(
-          title: table-index.at("title", default: default-titles.table-title),
-          target: fig-t(table),
-        )
-      }
-      if lsts {
-        outline(
-          title: listing-index.at("title", default: default-titles.listing-title),
-          target: fig-t(raw),
-        )
-      }
-      if imgs or tbls or lsts {
-        pagebreak()
-      }
-    }
-  }
 
   set par(justify: true)
   set page(numbering: "1")
@@ -428,21 +329,14 @@
   set heading(numbering: none)
   set page(numbering: "I")
 
-  // Biblography
-  if bibliography-object != none {
-    set bibliography(style: citation-style)
-    bibliography-object
-  }
+  _set-biblography(
+    bibliography-object: bibliography-object,
+    citation-style: citation-style
+  )
 
-  render-confidentiality-notice(page-idx: 7)
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 
-  // Appendix
-  if appendix.enabled {
-    pagebreak()
-    heading(appendix.at("title", default: if language == "de" { "Anhang" } else { "Appendix" }), numbering: none)
-    appendix.content
-  }
+  _render-appendix(appendix: appendix)
 
-  render-confidentiality-notice(page-idx: 8)
-
+  _render-confidentiality-notice-if-right-place(confidentiality-notice: confidentiality-notice)
 }
