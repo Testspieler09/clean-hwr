@@ -176,6 +176,9 @@ This template relies on the following Typst packages:
 
 These are fetched automatically during compilation.
 
+## Quick Shoutout
+Big thanks to [**Patrick O'Brien**](https://github.com/POBrien333) for creating the citation style file used in this template. You can find it at:
+
 ## Citation Style
 
 The template uses a CSL file for HWR-style citations, originally provided by **Patrick O’Brien**:
