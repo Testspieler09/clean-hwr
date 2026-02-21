@@ -1,10 +1,13 @@
+# Only when the template is published to typst universe this workflow will succed
 name: Build Typst document
+
 on:
-  push:
-    branches:
-      - main
-  pull_request:
   workflow_dispatch:
+    inputs:
+        output_name:
+          description: "Name of the output PDF"
+          required: false
+          default: "main.pdf"
 
 permissions:
   contents: write
@@ -15,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: typst-community/setup-typst@v4
-      - run: typst compile --root . template/main.typ main.pdf
+      - run: typst compile --root . template/main.typ ${{ inputs.output_name }}
       - uses: actions/upload-artifact@v4
         with:
           name: PDF

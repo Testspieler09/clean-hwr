@@ -1,20 +1,19 @@
-#import "@preview/clean-hwr:0.1.5": *
+#import "@preview/clean-hwr:0.2.0": *
 
 // These packages are used to displaying the acronyms and glossaries
 // They need to be imported here so you can use #acr / #gls
 // to reference them
 #import "@preview/acrostiche:0.7.0": *
-#import "@preview/glossarium:0.5.9": *
+#import "@preview/glossarium:0.5.10": *
 
 // Count words automatically
 #import "@preview/wordometer:0.1.5": word-count, total-words
-#show: word-count
 
 #show: hwr.with(
   metadata: (
     title: [HWR PTB Template],
     student-id: "12345678910",
-    authors: ("Alice Becker", "Bob Klein"),
+    authors: "Alice Becker",
     field-of-study: "Computer Science",
     company: "Example Company",
     enrollment-year: "2024",
@@ -47,8 +46,11 @@
   word-count: total-words,
 )
 
+#{[
+#show: word-count.with(exclude: (raw.where(block: true)))
+
 = Introduction to Quantum Computing
-Quantum computing leverages the principles of quantum mechanics to process information. Unlike classical bits, which are binary, quantum bits — or #gls("quantum_superposition") — can exist in a *superposition* of states.
+Quantum computing leverages the principles of quantum mechanics to process information. Unlike classical bits, which are binary, quantum bits - or #gls("quantum_superposition") - can exist in a *superposition* of states.
 #lorem(100)
 
 In this report, we explore how #acr("QPU")s are used in real-world applications.
@@ -105,3 +107,5 @@ fn main() {
 
 == Subchapter: Outlook
 #lorem(60)
+
+]}
