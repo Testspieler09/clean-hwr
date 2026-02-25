@@ -1,0 +1,77 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read metadata
+        id: meta
+        run: |
+          NAME=$(sed -n 's/^name *= *"\(.*\)"/\1/p' typst.toml)
+          VERSION=$(sed -n 's/^version *= *"\(.*\)"/\1/p' typst.toml)
+          TAG="${GITHUB_REF_NAME}"
+
+          if [ -z "$NAME" ] || [ -z "$VERSION" ]; then
+            echo "Could not read name or version from typst.toml" >&2
+            exit 1
+          fi
+
+          if [ "v$VERSION" != "$TAG" ]; then
+            echo "Tag ($TAG) does not match typst.toml version (v$VERSION)" >&2
+            exit 1
+          fi
+
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "pkg_id=${NAME}-${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Package files
+        run: |
+          mkdir package
+
+          if [ -f .typstignore ]; then
+            rsync -av \
+              --exclude-from=.typstignore \
+              --exclude=".git" \
+              ./ package/
+          else
+            rsync -av \
+              --exclude=".git" \
+              ./ package/
+          fi
+
+          rm -rf package/.github
+
+      - name: Create archive
+        run: |
+          NAME="${{ steps.meta.outputs.name }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          PKG_ID="${{ steps.meta.outputs.pkg_id }}"
+
+          mkdir dist
+          mkdir -p "dist/${NAME}/${VERSION}"
+
+          cp -r package/* "dist/${NAME}/${VERSION}"
+
+          cd dist
+          zip -r "${PKG_ID}.zip" "${NAME}"
+          cd ..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.meta.outputs.pkg_id }}
+          tag_name: ${{ github.ref_name }}
+          files: dist/${{ steps.meta.outputs.pkg_id }}.zip
+          generate_release_notes: true

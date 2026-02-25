@@ -1,0 +1,129 @@
+name: Publish to Typst Universe (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      description:
+        description: "Brief description of the update (what changed and why)"
+        required: true
+        type: string
+
+env:
+  REGISTRY_REPO: typst/packages
+  REGISTRY_FORK: Testspieler09/packages
+  PATH_PREFIX: packages/preview
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout package repo
+        uses: actions/checkout@v4
+
+      - name: Read name and version
+        id: meta
+        run: |
+          NAME=$(sed -n 's/^name *= *"\(.*\)"/\1/p' typst.toml)
+          VERSION=$(sed -n 's/^version *= *"\(.*\)"/\1/p' typst.toml)
+
+          if [ -z "$NAME" ] || [ -z "$VERSION" ]; then
+            echo "Could not read name or version from typst.toml" >&2
+            exit 1
+          fi
+
+          echo "Detected package:"
+          echo "  Name: $NAME"
+          echo "  Version: $VERSION"
+
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "pkg_id=${NAME}-${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Create clean package directory
+        run: |
+          mkdir package
+
+          if [ -f .typstignore ]; then
+            rsync -av \
+              --exclude-from=.typstignore \
+              --exclude=".git" \
+              ./ package/
+          else
+            rsync -av \
+              --exclude=".git" \
+              ./ package/
+          fi
+
+          # Remove workflow files if present
+          rm -rf package/.github
+
+      - name: Checkout registry
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.REGISTRY_REPO }}
+          token: ${{ secrets.REGISTRY_TOKEN }}
+          path: registry
+
+      - name: Check version does not exist
+        run: |
+          NAME="${{ steps.meta.outputs.name }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          TARGET="registry/${PATH_PREFIX}/${NAME}/${VERSION}"
+
+          if [ -d "$TARGET" ]; then
+            echo "Version already exists in Universe:" >&2
+            echo " $NAME $VERSION" >&2
+            exit 1
+          fi
+
+      - name: Create branch and copy package
+        run: |
+          NAME="${{ steps.meta.outputs.name }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          PKG_ID="${{ steps.meta.outputs.pkg_id }}"
+
+          TARGET="registry/${PATH_PREFIX}/${NAME}/${VERSION}"
+
+          mkdir -p "$TARGET"
+          cp -r package/* "$TARGET"
+
+          cd registry
+          git checkout -b "$PKG_ID"
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add .
+          git commit -m "${NAME}:${VERSION}"
+
+      - name: Push branch to fork
+        run: |
+          cd registry
+          git remote add fork https://github.com/${{ env.REGISTRY_FORK }}
+          git push --set-upstream fork HEAD
+
+      - name: Open Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+        run: |
+          NAME="${{ steps.meta.outputs.name }}"
+          VERSION="${{ steps.meta.outputs.version }}"
+          PKG_ID="${{ steps.meta.outputs.pkg_id }}"
+
+          gh pr create \
+            --repo typst/packages \
+            --title "${NAME}:${VERSION}" \
+            --body "I am submitting
+            - [x] an update for a package
+
+            Description: ${{ github.event.inputs.description }}
+
+            I have read and followed the submission guidelines and, in particular, I
+            - [x] tested my package locally on my system and it worked" \
+            --head "${{ env.REGISTRY_FORK }}:${PKG_ID}" \
+            --base main

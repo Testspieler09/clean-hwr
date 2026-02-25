@@ -1,0 +1,51 @@
+name: Tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  tests:
+    strategy:
+      # run tests on all versions, even if one fails
+      fail-fast: false
+      matrix:
+        # add any other Typst versions that your package should support
+        typst-version:
+          - typst: 0.13
+            tytanic: 0.2
+          - typst: 0.14
+            tytanic: 0.3
+
+    name: Test for ${{ matrix.typst-version.typst }} (Tytanic ${{ matrix.typst-version.tytanic }})
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup typst
+        id: setup-typst
+        uses: typst-community/setup-typst@v4
+        with:
+          typst-version: ${{ matrix.typst-version.typst }}
+
+      - name: Setup tytanic
+        uses: typst-community/setup-tytanic@v1
+        with:
+          tytanic-version: ${{ matrix.typst-version.tytanic }}
+
+      - name: Run test suite
+        run: tt run --no-fail-fast
+
+      - name: Archive test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: typst-${{ steps.setup-typst.outputs.typst-version }}-test-results
+          path: |
+            tests/**/diff/*.png
+            tests/**/out/*.png
+            tests/**/ref/*.png
+          retention-days: 5
